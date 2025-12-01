@@ -2,6 +2,8 @@
 
 ## Working agreements
 
+- Default to Chinese when communicating with the user unless they explicitly request another language.
+- Before making any code changes, confirm the user's intent by clarifying questions or restating the requirement.
 - Prefer running language-specific checks after editing source files, but only when the project exposes the relevant tooling (skip when scripts/configs are missing):
   - JavaScript: `npm test -- <filepath>` if the package defines `test`
   - Python: `pytest <filepath>` when pytest is configured
