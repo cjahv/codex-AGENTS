@@ -4,6 +4,8 @@
 
 - Default to Chinese when communicating with the user unless they explicitly request another language.
 - Before making any code changes, confirm or restate the user's intent only when the request is ambiguous or does not map to a concrete action.
+- When a user's wording is unclear (e.g., "delete auto handling"), first interrogate the phrase yourself—ask what action it likely targets, how it connects to the recent context, and whether similarly named concepts (such as automated actions vs. automatic prompts) differ; only if intent remains uncertain after that self-check should you ask the user for clarification.
+- When a problem already has a strong solution documented here, follow it; if no solid approach exists (e.g., brittle hardcoding, unbounded enumeration, or unclear efficacy), pause and clearly tell the user about the issue, propose ideas, and collaborate instead of forcing a poor fix.
 - Prefer running language-specific checks after editing source files, but only when the project exposes the relevant tooling (skip when scripts/configs are missing):
   - JavaScript: `npm test -- <filepath>` if the package defines `test`
   - Python: `pytest <filepath>` when pytest is configured
@@ -11,6 +13,7 @@
   - Java: `./gradlew test` for Gradle projects or `mvn test` for Maven projects that include test tasks
 - Prefer `pnpm` when installing dependencies.
 - Ask for confirmation before adding new production dependencies.
+- Do not add rollback-style logic for compatibility; use lean, effective checks/constraints to surface and fix issues early, and only introduce rollbacks when explicitly required.
 
 ## Commit & Pull Request Conventions
 
@@ -43,22 +46,24 @@ When creating a Pull Request:
   - Explain *why* the change is necessary.
   - List any *breaking changes*.
   - Attach relevant tests, screenshots, or logs when applicable.
+- When using `glab`, messages do not support `\n`; for Markdown PR bodies, use `printf` to convert strings or insert real newlines directly instead of `\n`.
 
 ### Code Execution Rules for Codex
 
 When executing commands inside Codex automation or agent flows:
 
-- All commands **must** be wrapped with:
+- Use exactly one shell layer with zsh: if an outer shell already exists, do not add another; if no shell wrapper was planned, wrap the command with `/bin/zsh -lc` as the single outermost layer:
 
 ```
-/bin/sh -c '<command>'
+/bin/zsh -lc '<command>'
 ```
 
-- Do not execute commands directly; always ensure shell wrapping for consistency, portability, and safety.
-- Multi-step commands must be combined into a single `/bin/sh -c` invocation using `&&` or `;` as appropriate.
+- Do not execute commands directly; always ensure the `/bin/zsh -lc` wrapper for consistency, portability, and safety.
+- If another wrapper would surround the command, restructure the invocation so that `/bin/zsh -lc` remains the outermost layer to avoid nested shells changing behavior.
+- Multi-step commands must be combined into a single `/bin/zsh -lc` invocation using `&&` or `;` as appropriate.
 
 Example:
 
 ```
-/bin/sh -c 'pnpm install && pnpm build'
+/bin/zsh -lc 'pnpm install && pnpm build'
 ```
