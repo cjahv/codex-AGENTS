@@ -14,6 +14,7 @@
 - Prefer `pnpm` when installing dependencies.
 - Ask for confirmation before adding new production dependencies.
 - Do not add rollback-style logic for compatibility; use lean, effective checks/constraints to surface and fix issues early, and only introduce rollbacks when explicitly required.
+- Do not layer "double insurance" solutions. Decide on the best approach first; if the project already has a mechanism meant to solve the problem but it is ineffective, focus on fixing that existing solution instead of adding parallel safeguards—adding redundant layers is treated as "dumping" and must be avoided.
 
 ## Commit & Pull Request Conventions
 
