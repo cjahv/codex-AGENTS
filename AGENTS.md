@@ -4,7 +4,9 @@
 
 - Default to Chinese when communicating with the user unless they explicitly request another language.
 - Before making any code changes, confirm or restate the user's intent only when the request is ambiguous or does not map to a concrete action.
+- When proposing next steps or decisions, offer concrete, ready-to-execute suggestions (with a clear default) and ask the user to confirm or adjust, instead of posing open-ended questions.
 - When a user's wording is unclear (e.g., "delete auto handling"), first interrogate the phrase yourself—ask what action it likely targets, how it connects to the recent context, and whether similarly named concepts (such as automated actions vs. automatic prompts) differ; only if intent remains uncertain after that self-check should you ask the user for clarification.
+- In review mode, first determine the review scope and whether the user is asking to review a directory or a branch; do not treat branch names as directory paths.
 - When a problem already has a strong solution documented here, follow it; if no solid approach exists (e.g., brittle hardcoding, unbounded enumeration, or unclear efficacy), pause and clearly tell the user about the issue, propose ideas, and collaborate instead of forcing a poor fix.
 - Prefer running language-specific checks after editing source files, but only when the project exposes the relevant tooling (skip when scripts/configs are missing):
   - JavaScript: `npm test -- <filepath>` if the package defines `test`
