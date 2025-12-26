@@ -1,3 +1,6 @@
 /*
 !/.gitignore
 !/AGENTS.md
+!/skills
+!/skills/**
+/skills/.system
