@@ -8,6 +8,7 @@
 - When a user's wording is unclear (e.g., "delete auto handling"), first interrogate the phrase yourself—ask what action it likely targets, how it connects to the recent context, and whether similarly named concepts (such as automated actions vs. automatic prompts) differ; only if intent remains uncertain after that self-check should you ask the user for clarification.
 - In review mode, first determine the review scope and whether the user is asking to review a directory or a branch; do not treat branch names as directory paths.
 - When a problem already has a strong solution documented here, follow it; if no solid approach exists (e.g., brittle hardcoding, unbounded enumeration, or unclear efficacy), pause and clearly tell the user about the issue, propose ideas, and collaborate instead of forcing a poor fix.
+- When performing check operations in local development, if the target is local or directly accessible locally, run the check without asking for user approval. Treat checks as read-only; tests that perform writes are not checks.
 - Prefer running language-specific checks after editing source files, but only when the project exposes the relevant tooling (skip when scripts/configs are missing):
   - JavaScript: `npm test -- <filepath>` if the package defines `test`
   - Python: `pytest <filepath>` when pytest is configured
@@ -32,7 +33,7 @@ All commits **must** follow the conventional form:
 
 Requirements:
 
-- The entire message **must be written in Chinese**.
+- The entire message **should be written in Chinese by default unless explicitly requested otherwise**.
 - `<subject>` should be concise and written in one line.
 - `<body>` may describe motivation, design decisions, or side-effects.
 - `<footer>` can include references, breaking changes, or related tasks.
@@ -55,15 +56,17 @@ When creating a Pull Request:
 
 When executing commands inside Codex automation or agent flows:
 
-- Use exactly one shell layer with zsh: if an outer shell already exists, do not add another; if no shell wrapper was planned, wrap the command with `/bin/zsh -lc` as the single outermost layer:
+- Use `/bin/zsh -lc` only when directly executing a command. In all other contexts (documentation, code examples, suggested commands), do not add the wrapper.
+- Exception: for base system commands that are included by default on Linux/macOS, do not use the `/bin/zsh -lc` wrapper even when executing them.
+- Exception list (no wrapper needed): `ls`, `git`, `rg`, `sed`, `curl`, `wget`.
+- Use exactly one shell layer with zsh: if an outer shell already exists, do not add another; if no shell wrapper is already present, wrap the command with `/bin/zsh -lc` as the single outermost layer:
 
 ```
 /bin/zsh -lc '<command>'
 ```
 
-- Do not execute commands directly; always ensure the `/bin/zsh -lc` wrapper for consistency, portability, and safety.
+- When executing commands, do not run them directly unless they are base system commands; otherwise ensure the `/bin/zsh -lc` wrapper when they are not already wrapped.
 - If another wrapper would surround the command, restructure the invocation so that `/bin/zsh -lc` remains the outermost layer to avoid nested shells changing behavior.
-- Multi-step commands must be combined into a single `/bin/zsh -lc` invocation using `&&` or `;` as appropriate.
 
 Example:
 
