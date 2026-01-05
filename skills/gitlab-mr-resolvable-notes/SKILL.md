@@ -57,7 +57,34 @@ Guidelines:
 
 Record `base_sha`, `head_sha`, `start_sha`.
 
-4) **Post one discussion per finding, anchored to the changed line**
+4) **Fetch existing discussions for de-dup and reopen**
+
+```
+/bin/zsh -lc "cd <repo> && glab api projects/<project_id>/merge_requests/<mr_iid>/discussions"
+```
+
+Match rule (use this to locate a prior note):
+- `note.body` equals `"<问题类型>: <消息>"` (exact match), and
+- `note.position.new_path` equals `<path>` and `note.position.new_line` equals `<line>`.
+
+Decision:
+- If a matching discussion is **resolvable** and **unresolved** (`discussion.resolved == false`), **do not post** a new note.
+- If a matching discussion is **resolved**, **reopen and edit the existing note** to explain why it is reopened (see step 5).
+- If no match exists, create a new discussion (step 6).
+
+5) **Reopen + edit resolved note (when the same issue reappears)**
+
+```
+/bin/zsh -lc 'cd <repo> && glab api projects/<project_id>/merge_requests/<mr_iid>/discussions/<discussion_id>/notes/<note_id> -X PUT \
+  -H "Content-Type: application/json" \
+  -d "{\\"body\\":\\"<问题类型>: <消息>\\n\\n重新打开原因: <说明>\\",\\"resolved\\":false}"'
+```
+
+Notes:
+- Use the first matching note in the discussion for the update.
+- Keep the original message, then append a short, concrete reason for reopening.
+
+6) **Post one discussion per finding, anchored to the changed line**
 
 ```
 /bin/zsh -lc 'cd <repo> && glab api projects/<project_id>/merge_requests/<mr_iid>/discussions -X POST \
@@ -71,4 +98,4 @@ Record `base_sha`, `head_sha`, `start_sha`.
 - 每个问题单独建一个 discussion，方便提交时自动解决。
 - Use the API `discussions` endpoint to ensure the comment is resolvable and blocks merge if required by project settings.
 - Avoid non-resolvable `mr note` for this workflow.
-- If you need to update the content, post a new discussion and resolve the old one manually in GitLab UI.
+- 若同一问题已存在且未解决，不重复提交；若已解决但复现，必须按步骤 5 重新打开并说明原因。

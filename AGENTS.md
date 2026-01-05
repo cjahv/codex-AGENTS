@@ -57,7 +57,7 @@ When creating a Pull Request:
 When executing commands inside Codex automation or agent flows:
 
 - Use `/bin/zsh -lc` only when directly executing a command. In all other contexts (documentation, code examples, suggested commands), do not add the wrapper.
-- Exception: for base system commands that are included by default on Linux/macOS, do not use the `/bin/zsh -lc` wrapper even when executing them.
+- Exceptions (no wrapper needed): commands that are included by default on macOS/Linux, and the explicit exception list below.
 - Exception list (no wrapper needed): `ls`, `git`, `rg`, `sed`, `curl`, `wget`.
 - Use exactly one shell layer with zsh: if an outer shell already exists, do not add another; if no shell wrapper is already present, wrap the command with `/bin/zsh -lc` as the single outermost layer:
 
