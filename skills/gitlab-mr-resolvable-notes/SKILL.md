@@ -7,6 +7,11 @@ metadata:
 
 # GitLab MR Resolvable Notes
 
+## Review focus
+
+- 优先关注自动化工具难以发现的边界情况、设计缺陷与逻辑问题。
+- 不要花精力报告编译/语法错误；这类问题应由 CI 自动拦截。
+
 ## When to use
 
 Use this skill when you need to turn review findings into a single, formatted, resolvable discussion on a GitLab merge request, and post it via `glab api projects/<id>/merge_requests/<iid>/discussions`.
