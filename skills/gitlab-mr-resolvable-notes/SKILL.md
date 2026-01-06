@@ -11,6 +11,7 @@ metadata:
 
 - 优先关注自动化工具难以发现的边界情况、设计缺陷与逻辑问题。
 - 不要花精力报告编译/语法错误；这类问题应由 CI 自动拦截。
+- 若 MR/PR 关联了 Issue，需要参考 Issue 的描述与验收标准，评价当前 MR/PR 的完成度（覆盖度、偏差、未满足点）。
 
 ## When to use
 
@@ -39,6 +40,22 @@ Guidelines:
 - Keep `<问题类型>` short (e.g., 安全风险, 可靠性, 逻辑错误).
 - `<消息>` should be specific and actionable; include the impact and a concise fix suggestion.
 - Use repo-relative paths and single line numbers (`path/to/File.java:31`).
+
+## When review is positive
+
+If the overall review outcome is good and no blocking issues remain, post a positive evaluation note that includes:
+- Trigger condition: no unresolved blocking issues, and all required checks are passing (or explicitly waived).
+- **规范性**、**代码质量**、**表达清晰度** 三项评分，每项满分 10 分。
+- Use Markdown with 5 symbols per item: ⭐️=2 points, ✨=1 point, 全角空格=0 points.
+
+Example format:
+
+```
+本次 MR/PR 完成度高，改动聚焦且一致。
+- 规范性: ⭐️⭐️⭐️⭐️　 (8/10)
+- 代码质量: ⭐️⭐️⭐️⭐️✨ (9/10)
+- 表达清晰度: ⭐️⭐️⭐️　　 (6/10)
+```
 
 ## Procedure
 
