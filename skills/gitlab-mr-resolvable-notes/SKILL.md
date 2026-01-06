@@ -12,6 +12,7 @@ metadata:
 - 优先关注自动化工具难以发现的边界情况、设计缺陷与逻辑问题。
 - 不要花精力报告编译/语法错误；这类问题应由 CI 自动拦截。
 - 若 MR/PR 关联了 Issue，需要参考 Issue 的描述与验收标准，评价当前 MR/PR 的完成度（覆盖度、偏差、未满足点）。
+- 审查阶段优先查看 MR/PR 的流水线测试结果与日志，不在本地重复运行测试。
 
 ## When to use
 
@@ -41,16 +42,19 @@ Guidelines:
 - `<消息>` should be specific and actionable; include the impact and a concise fix suggestion.
 - Use repo-relative paths and single line numbers (`path/to/File.java:31`).
 
-## When review is positive
+## Quality evaluation (always)
 
-If the overall review outcome is good and no blocking issues remain, post a positive evaluation note that includes:
-- Trigger condition: no unresolved blocking issues, and all required checks are passing (or explicitly waived).
+Always post a quality evaluation comment regardless of outcome, and keep it as a single updatable comment:
+- If a prior quality evaluation comment exists, update it; otherwise create it.
+- This evaluation is a normal MR/PR comment (non-resolvable), not a discussion note.
+- Use a stable hidden marker `<!-- quality-eval -->` at the top so it can be found and updated.
 - **规范性**、**代码质量**、**表达清晰度** 三项评分，每项满分 10 分。
 - Use Markdown with 5 symbols per item: ⭐️=2 points, ✨=1 point, 全角空格=0 points.
 
 Example format:
 
 ```
+<!-- quality-eval -->
 本次 MR/PR 完成度高，改动聚焦且一致。
 - 规范性: ⭐️⭐️⭐️⭐️　 (8/10)
 - 代码质量: ⭐️⭐️⭐️⭐️✨ (9/10)
