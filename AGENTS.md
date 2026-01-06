@@ -57,15 +57,20 @@ When creating a Pull Request:
 When executing commands inside Codex automation or agent flows:
 
 - Use `/bin/zsh -lc` only when directly executing a command. In all other contexts (documentation, code examples, suggested commands), do not add the wrapper.
-- Exceptions (no wrapper needed): commands that are included by default on macOS/Linux, and the explicit exception list below.
+- Exceptions (no wrapper needed): only the explicit exception list below. Do not infer additional "base system" commands beyond this list.
 - Exception list (no wrapper needed): `ls`, `git`, `rg`, `sed`, `curl`, `wget`.
+- Deterministic wrapper decision:
+  - Identify the command word as the first non-assignment token (skip leading `VAR=...`).
+  - If the command word is in the exception list, do not add `/bin/zsh -lc` even when the line includes pipes, redirects, or `&&` / `||` / `;`.
+  - Otherwise, wrap the entire command line with `/bin/zsh -lc`.
+  - Do not scan later pipeline segments or chained commands; the first command word decides.
 - Use exactly one shell layer with zsh: if an outer shell already exists, do not add another; if no shell wrapper is already present, wrap the command with `/bin/zsh -lc` as the single outermost layer:
 
 ```
 /bin/zsh -lc '<command>'
 ```
 
-- When executing commands, do not run them directly unless they are base system commands; otherwise ensure the `/bin/zsh -lc` wrapper when they are not already wrapped.
+- When executing commands, do not run them directly unless the command word matches the exception list; otherwise ensure the `/bin/zsh -lc` wrapper when they are not already wrapped.
 - If another wrapper would surround the command, restructure the invocation so that `/bin/zsh -lc` remains the outermost layer to avoid nested shells changing behavior.
 
 Example:
