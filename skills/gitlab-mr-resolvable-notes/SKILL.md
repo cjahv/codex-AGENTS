@@ -83,10 +83,10 @@ Example format:
 
 Record `base_sha`, `head_sha`, `start_sha`.
 
-4) **Fetch existing discussions for de-dup and reopen**
+4) **Fetch existing discussions for de-dup and reopen (with pagination)**
 
 ```
-/bin/zsh -lc "cd <repo> && glab api projects/<project_id>/merge_requests/<mr_iid>/discussions"
+/bin/zsh -lc "cd <repo> && for page in {1..20}; do glab api projects/<project_id>/merge_requests/<mr_iid>/discussions?page=$page&per_page=100; done"
 ```
 
 Match rule (use this to locate a prior note):
@@ -95,22 +95,45 @@ Match rule (use this to locate a prior note):
 
 Decision:
 - If a matching discussion is **resolvable** and **unresolved** (`discussion.resolved == false`), **do not post** a new note.
-- If a matching discussion is **resolved**, **reopen and edit the existing note** to explain why it is reopened (see step 5).
-- If no match exists, create a new discussion (step 6).
+- If a matching discussion is **resolved** and the issue **still exists**, **reopen and add a follow-up note** to explain why it is reopened (see step 5).
+- If a matching discussion is **resolved** and the issue **no longer exists**, **ensure it is marked resolved** (see step 6).
+- If a matching discussion is **resolved == false** but the issue **is already fixed**, **mark it resolved** (see step 6).
+- If no match exists, create a new discussion (step 7).
 
-5) **Reopen + edit resolved note (when the same issue reappears)**
+5) **Reopen + follow-up note (when the same issue reappears)**
 
 ```
 /bin/zsh -lc 'cd <repo> && glab api projects/<project_id>/merge_requests/<mr_iid>/discussions/<discussion_id>/notes/<note_id> -X PUT \
   -H "Content-Type: application/json" \
-  -d "{\\"body\\":\\"<问题类型>: <消息>\\n\\n重新打开原因: <说明>\\",\\"resolved\\":false}"'
+  -d "{\\"resolved\\":false}"'
+'
 ```
 
 Notes:
 - Use the first matching note in the discussion for the update.
-- Keep the original message, then append a short, concrete reason for reopening.
+- Then add a new follow-up note to explain why it is reopened and include concrete evidence.
 
-6) **Post one discussion per finding, anchored to the changed line**
+Follow-up note example:
+
+```
+/bin/zsh -lc 'cd <repo> && glab api projects/<project_id>/merge_requests/<mr_iid>/discussions/<discussion_id>/notes -X POST \
+  -H "Content-Type: application/json" \
+  -d "{\\"body\\":\\"重新打开原因: <说明>\\n证据: <更具体的证据>\\",\\"resolved\\":false}"'
+```
+
+6) **Mark a discussion as resolved when the issue is fixed**
+
+```
+/bin/zsh -lc 'cd <repo> && glab api projects/<project_id>/merge_requests/<mr_iid>/discussions/<discussion_id>/notes/<note_id> -X PUT \
+  -H "Content-Type: application/json" \
+  -d "{\\"resolved\\":true}"'
+```
+
+Notes:
+- Use the first matching note in the discussion for the update.
+- This is required when the issue is already fixed but the discussion is still unresolved.
+
+7) **Post one discussion per finding, anchored to the changed line**
 
 ```
 /bin/zsh -lc 'cd <repo> && glab api projects/<project_id>/merge_requests/<mr_iid>/discussions -X POST \
