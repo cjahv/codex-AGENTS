@@ -48,6 +48,9 @@ Always post a quality evaluation comment regardless of outcome, and keep it as a
 - If a prior quality evaluation comment exists, update it; otherwise create it.
 - This evaluation is a normal MR/PR comment (non-resolvable), not a discussion note.
 - Use a stable hidden marker `<!-- quality-eval -->` at the top so it can be found and updated.
+- The quality evaluation must be the first output and the first published comment in the review flow:
+  - When generating the final response, output the quality evaluation before any findings.
+  - When calling the API, update/create the quality evaluation comment before creating any resolvable discussions.
 - **规范性**、**代码质量**、**表达清晰度** 三项评分，每项满分 10 分。
 - Use Markdown with 5 symbols per item: ⭐️=2 points, ✨=1 point, 全角空格=0 points.
 
@@ -62,6 +65,10 @@ Example format:
 ```
 
 ## Procedure
+
+0) **Post or update quality evaluation first**
+
+Ensure the quality evaluation comment (with `<!-- quality-eval -->`) is created/updated before any discussion notes are posted.
 
 1) **Resolve Project ID**
 
