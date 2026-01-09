@@ -24,6 +24,7 @@ Use this skill when you need to turn review findings into a single, formatted, r
 - **Merge Request IID**: find the target MR for the current branch, e.g. `glab mr list --source-branch <branch>`.
 - **Findings**: each issue needs a type, message, and a precise `file:line` in repo-relative form.
 - **Diff refs**: `base_sha`, `head_sha`, `start_sha` for anchoring to the diff.
+- **Author intent / constraints**: MR description and submitter comments that explain edge cases or rationale.
 
 ## Required message format
 
@@ -82,7 +83,15 @@ Ensure the quality evaluation comment (with `<!-- quality-eval -->`) is created/
 /bin/zsh -lc "cd <repo> && glab mr list --source-branch <branch>"
 ```
 
-3) **Get diff refs for line anchors**
+3) **Read submitter comments and MR context**
+
+```
+/bin/zsh -lc "cd <repo> && for page in {1..20}; do glab api projects/<project_id>/merge_requests/<mr_iid>/notes?page=$page&per_page=100; done"
+```
+
+Focus on author notes that explain intent, edge cases, or constraints; carry this context into review findings.
+
+4) **Get diff refs for line anchors**
 
 ```
 /bin/zsh -lc "cd <repo> && glab api projects/<project_id>/merge_requests/<mr_iid> | jq '.diff_refs'"
@@ -90,7 +99,7 @@ Ensure the quality evaluation comment (with `<!-- quality-eval -->`) is created/
 
 Record `base_sha`, `head_sha`, `start_sha`.
 
-4) **Fetch existing discussions for de-dup and reopen (with pagination)**
+5) **Fetch existing discussions for de-dup and reopen (with pagination)**
 
 ```
 /bin/zsh -lc "cd <repo> && for page in {1..20}; do glab api projects/<project_id>/merge_requests/<mr_iid>/discussions?page=$page&per_page=100; done"
@@ -107,7 +116,7 @@ Decision:
 - If a matching discussion is **resolved == false** but the issue **is already fixed**, **mark it resolved** (see step 6).
 - If no match exists, create a new discussion (step 7).
 
-5) **Reopen + follow-up note (when the same issue reappears)**
+6) **Reopen + follow-up note (when the same issue reappears)**
 
 ```
 /bin/zsh -lc 'cd <repo> && glab api projects/<project_id>/merge_requests/<mr_iid>/discussions/<discussion_id>/notes/<note_id> -X PUT \
@@ -128,7 +137,7 @@ Follow-up note example:
   -d "{\\"body\\":\\"重新打开原因: <说明>\\n证据: <更具体的证据>\\",\\"resolved\\":false}"'
 ```
 
-6) **Mark a discussion as resolved when the issue is fixed**
+7) **Mark a discussion as resolved when the issue is fixed**
 
 ```
 /bin/zsh -lc 'cd <repo> && glab api projects/<project_id>/merge_requests/<mr_iid>/discussions/<discussion_id>/notes/<note_id> -X PUT \
@@ -140,7 +149,7 @@ Notes:
 - Use the first matching note in the discussion for the update.
 - This is required when the issue is already fixed but the discussion is still unresolved.
 
-7) **Post one discussion per finding, anchored to the changed line**
+8) **Post one discussion per finding, anchored to the changed line**
 
 ```
 /bin/zsh -lc 'cd <repo> && glab api projects/<project_id>/merge_requests/<mr_iid>/discussions -X POST \
