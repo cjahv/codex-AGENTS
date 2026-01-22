@@ -9,6 +9,7 @@ metadata:
 
 ## Review focus
 
+- 项目运行在内网环境；讨论风险与方案时优先站在本地部署/内网运维的现实约束上。
 - 优先关注自动化工具难以发现的边界情况、设计缺陷与逻辑问题。
 - 不要花精力报告编译/语法错误；这类问题应由 CI 自动拦截。
 - 若 MR/PR 关联了 Issue，需要参考 Issue 的描述与验收标准，评价当前 MR/PR 的完成度（覆盖度、偏差、未满足点）。
@@ -40,7 +41,10 @@ Each issue block must follow this exact structure, separated by a blank line:
 
 Guidelines:
 - Keep `<问题类型>` short (e.g., 安全风险, 可靠性, 逻辑错误).
-- `<消息>` should be specific and actionable; include the impact and a concise fix suggestion.
+- `<消息>` must be in **大白话**，面向不懂技术的产品经理：
+  - 先说明“会发生什么影响/用户会遇到什么问题/业务会损失什么”。
+  - 再给出“怎么改会更好”的一句话建议（避免术语与缩写）。
+  - 避免“代码/函数/类/接口”等实现词，改用“功能/页面/流程/数据”表述。
 - Use repo-relative paths and single line numbers (`path/to/File.java:31`).
 
 ## Quality evaluation (always)
@@ -164,3 +168,4 @@ Notes:
 - Use the API `discussions` endpoint to ensure the comment is resolvable and blocks merge if required by project settings.
 - Avoid non-resolvable `mr note` for this workflow.
 - 若同一问题已存在且未解决，不重复提交；若已解决但复现，必须按步骤 5 重新打开并说明原因。
+ - 讨论措辞尽量“非技术化”：用场景和结果表达，不用工程细节。

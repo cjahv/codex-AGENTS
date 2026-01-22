@@ -17,8 +17,9 @@
   - Java: `./gradlew test` for Gradle projects or `mvn test` for Maven projects that include test tasks
 - Prefer `pnpm` when installing dependencies.
 - Ask for confirmation before adding new production dependencies.
-- Do not add rollback-style logic for compatibility; use lean, effective checks/constraints to surface and fix issues early, and only introduce rollbacks when explicitly required.
+- Absolutely do not add rollback-style logic. Replace it with stricter constraints/checks that surface issues early; rollbacks are forbidden unless explicitly required.
 - Do not layer "double insurance" solutions. Decide on the best approach first; if the project already has a mechanism meant to solve the problem but it is ineffective, focus on fixing that existing solution instead of adding parallel safeguards—adding redundant layers is treated as "dumping" and must be avoided.
+- Product form: this repo ships customer self-hosted builds (offline/private environments), so do not assume an internet SaaS model by default; when discussing security/protocols, first consider the on-prem trust boundary and optional hardening knobs, then offer opt-in enhancements.
 
 ## Commit & Pull Request Conventions
 
@@ -52,30 +53,3 @@ When creating a Pull Request:
   - List any *breaking changes*.
   - Attach relevant tests, screenshots, or logs when applicable.
 - When using `glab`, messages do not support `\n`; for Markdown PR bodies, use `printf` to convert strings or insert real newlines directly instead of `\n`.
-
-### Code Execution Rules for Codex
-
-When executing commands inside Codex automation or agent flows:
-
-- Use `/bin/zsh -lc` only when directly executing a command. In all other contexts (documentation, code examples, suggested commands), do not add the wrapper.
-- Exceptions (no wrapper needed): only the explicit exception list below. Do not infer additional "base system" commands beyond this list.
-- Exception list (no wrapper needed): `ls`, `git`, `rg`, `sed`, `curl`, `wget`.
-- Deterministic wrapper decision:
-  - Identify the command word as the first non-assignment token (skip leading `VAR=...`).
-  - If the command word is in the exception list, do not add `/bin/zsh -lc` even when the line includes pipes, redirects, or `&&` / `||` / `;`.
-  - Otherwise, wrap the entire command line with `/bin/zsh -lc`.
-  - Do not scan later pipeline segments or chained commands; the first command word decides.
-- Use exactly one shell layer with zsh: if an outer shell already exists, do not add another; if no shell wrapper is already present, wrap the command with `/bin/zsh -lc` as the single outermost layer:
-
-```
-/bin/zsh -lc '<command>'
-```
-
-- When executing commands, do not run them directly unless the command word matches the exception list; otherwise ensure the `/bin/zsh -lc` wrapper when they are not already wrapped.
-- If another wrapper would surround the command, restructure the invocation so that `/bin/zsh -lc` remains the outermost layer to avoid nested shells changing behavior.
-
-Example:
-
-```
-/bin/zsh -lc 'pnpm install && pnpm build'
-```
