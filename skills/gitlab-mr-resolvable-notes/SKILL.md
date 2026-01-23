@@ -56,6 +56,8 @@ Always post a quality evaluation comment regardless of outcome, and keep it as a
 - The quality evaluation must be the first output and the first published comment in the review flow:
   - When generating the final response, output the quality evaluation before any findings.
   - When calling the API, update/create the quality evaluation comment before creating any resolvable discussions.
+- Even when there are **zero findings**, you must still post/update the quality evaluation comment.
+- If there are **zero findings**, do **not** create any discussions; only publish the quality evaluation comment, and resolve any previously open discussions that are now fixed.
 - **规范性**、**代码质量**、**表达清晰度** 三项评分，每项满分 10 分。
 - Use Markdown with 5 symbols per item: ⭐️=2 points, ✨=1 point, 全角空格=0 points.
 
@@ -74,6 +76,7 @@ Example format:
 0) **Post or update quality evaluation first**
 
 Ensure the quality evaluation comment (with `<!-- quality-eval -->`) is created/updated before any discussion notes are posted.
+If there are no findings, continue to step 5 to resolve any existing open discussions, then stop.
 
 1) **Resolve Project ID**
 
