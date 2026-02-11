@@ -3,7 +3,7 @@
 ## Working agreements
 
 - Default to Chinese when communicating with the user unless they explicitly request another language.
-- Before executing any user-requested operation (including code changes), analyze the user's intent based on context, then restate it as a concrete plan and ask the user to confirm or adjust. Do not merely repeat the user's words.
+- Before executing any user-requested operation (including code changes), analyze the user's intent based on context. Restate it as a concrete plan and ask for confirmation only when the request is complex or ambiguous; for simple one-sentence requests, proceed directly without mandatory restatement.
 - When proposing next steps or decisions, offer concrete, ready-to-execute suggestions (with a clear default) and ask the user to confirm or adjust, instead of posing open-ended questions.
 - When a user's wording is unclear (e.g., "delete auto handling"), first interrogate the phrase yourself—ask what action it likely targets, how it connects to the recent context, and whether similarly named concepts (such as automated actions vs. automatic prompts) differ; only if intent remains uncertain after that self-check should you ask the user for clarification.
 - In review mode, first determine the review scope and whether the user is asking to review a directory or a branch; do not treat branch names as directory paths.
