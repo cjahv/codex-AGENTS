@@ -19,6 +19,7 @@
 - Ask for confirmation before adding new production dependencies.
 - Absolutely do not add rollback-style logic. Replace it with stricter constraints/checks that surface issues early; rollbacks are forbidden unless explicitly required.
 - Do not layer "double insurance" solutions. Decide on the best approach first; if the project already has a mechanism meant to solve the problem but it is ineffective, focus on fixing that existing solution instead of adding parallel safeguards—adding redundant layers is treated as "dumping" and must be avoided.
+- Whenever introducing a new path or an optimized implementation, explicitly mark the old path/implementation as `Deprecated`; never assume it will be cleaned up later without a deprecation marker. When describing removed features, also mark related rollback tests and rollback-oriented code as `Deprecated` to prevent accidental regression usage.
 - Product form: this repo ships customer self-hosted builds (offline/private environments), so do not assume an internet SaaS model by default; when discussing security/protocols, first consider the on-prem trust boundary and optional hardening knobs, then offer opt-in enhancements.
 
 ## Commit & Pull Request Conventions
