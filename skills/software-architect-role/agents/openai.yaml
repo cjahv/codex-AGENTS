@@ -1,0 +1,4 @@
+interface:
+  display_name: "SA 软件架构师角色"
+  short_description: "SA 从系统全局审视架构，并以技术 Leader 视角协调前后端落地"
+  default_prompt: "SA 使用 $software-architect-role 从软件架构师兼技术 Leader 视角评估这个系统方案，指出结构问题、演进风险，并给出前后端协作分工与落地顺序。"

@@ -1,0 +1,4 @@
+interface:
+  display_name: "PR 重写未推送提交并创建 PR/MR"
+  short_description: "PR 检查未推送提交并重写提交信息"
+  default_prompt: "PR 使用 $reword-unpushed-commits-pr 检查当前分支未推送提交，基于每个提交 diff 重写提交信息，并在确认后创建或更新 PR/MR。"

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Repo Memory Handoff"
+  short_description: "自动补齐仓库记忆约定并维护最新 handoff 记录"
+  default_prompt: "Use $repo-memory-handoff to ensure this repository has AGENTS memory rules and an up-to-date .agent-handoff record."

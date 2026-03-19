@@ -1,0 +1,4 @@
+interface:
+  display_name: "UX 工程师角色"
+  short_description: "UX 从用户目标、信息结构与交互质量审视体验方案"
+  default_prompt: "UX 使用 $ux-engineer-role 从用户视角审查这个界面，并给出可执行的交互、信息架构与视觉层级改进建议。"

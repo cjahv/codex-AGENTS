@@ -1,0 +1,4 @@
+interface:
+  display_name: "UI 工程师角色"
+  short_description: "UI 严审视觉、导航、图标、主题与克制动效"
+  default_prompt: "UI 使用 $ui-engineer-role 从 UI 工程师视角审查这个界面，重点看视觉质感、侧边导航、图标体系、亮暗主题、首屏加载和动效是否克制。"

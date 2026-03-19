@@ -1,0 +1,4 @@
+interface:
+  display_name: "PR 产品经理角色"
+  short_description: "PR 需求审查、优先级判断与方案收敛"
+  default_prompt: "PR 使用 $product-manager-role 从产品经理视角审视这个需求，明确用户问题、价值、边界、优先级与验收标准。"

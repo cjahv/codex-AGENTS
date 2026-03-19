@@ -1,8 +1,8 @@
 ---
 name: commit-message-from-staged
-description: 根据 git diff --cached 整理提交文案草稿（不执行提交）
+description: GIT 根据 `git diff --cached` 整理提交文案草稿（不执行提交）。用于用户只想生成提交文案时触发。
 metadata:
-  short-description: 从暂存区生成提交文案
+  short-description: GIT 从暂存区生成提交文案
 ---
 
 # 根据暂存区整理提交文案

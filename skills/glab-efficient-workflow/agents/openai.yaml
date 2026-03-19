@@ -1,0 +1,4 @@
+interface:
+  display_name: "GLAB 高效工作流"
+  short_description: "GLAB GitLab 命令速查与高效 MR 流程"
+  default_prompt: "GLAB 使用 $glab-efficient-workflow 完成分支检查、MR 创建或更新与结果回报。"
