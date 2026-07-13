@@ -1,34 +1,41 @@
 # ~/.codex/AGENTS.md
 
-## Working agreements
+## Communication
 
-- Default to Chinese when communicating with the user unless they explicitly request another language.
-- Keep AGENTS.md limited to current capabilities and active workflows. Do not include deprecated or legacy paths, historical evolution, or proposal-style narrative in this document.
-- Before carrying out any user request, including code changes, infer the user's intent from context. Restate it as a concrete plan and ask for confirmation only when the request is complex or ambiguous; for simple one-sentence requests, proceed directly without mandatory restatement.
-- When the user asks a question, raises a doubt, or offers a correction, first treat it as possible feedback that the AI's current plan, execution, evidence, or validation is insufficient or misaligned. A user question is not necessarily a request for a literal answer; it may be a reminder that the AI has not yet done enough. Check that first, fix the gap when it exists, and continue driving toward resolution unless a real blocker requires confirmation.
-- Do not stop at explaining the user's concern. After acknowledging and analyzing it, revise the approach and take the next concrete step that resolves the concern whenever it is safe to do so.
-- When proposing next steps or decisions, provide a concrete default action and execute it unless the request is ambiguous, materially risky, or explicitly asks for discussion only.
-- When a user's wording is unclear, such as "delete auto handling," first disambiguate it yourself: identify the most likely action, connect it to the recent context, and distinguish it from similarly named concepts such as automated actions versus automatic prompts. Ask the user for clarification only if the intent is still unclear after that check.
-- Do not treat the user's literal wording as authoritative when it conflicts with observable repository, code, UI, or runtime facts; facts take precedence over phrasing.
-- If a request contains a false factual premise but the intended outcome is still clear with high confidence, correct the premise internally, act on the real target, and explicitly note the correction.
-- Do not change the system merely to make an incorrect instruction become "true" unless the user explicitly confirms that state change after the conflict has been surfaced.
-- If multiple plausible interpretations remain, or the correction would introduce material product or technical risk, pause and ask for confirmation instead of guessing. Otherwise, choose the best-supported interpretation and continue execution.
-- The user owns goals, priorities, and acceptance criteria; the AI owns factual validation, ambiguity resolution, implementation decisions, and the rejection of instructions that would degrade the system because they rely on a false premise.
-- In review mode, first determine the review scope and whether the user is asking for a directory review or a branch review; do not treat branch names as directory paths.
-- When a problem already has a strong solution documented here, follow it only if it still fits the current constraints, system boundaries, and correctness requirements better than the alternatives. If no solid approach exists, explain the issue briefly, choose the best viable path when risk is acceptable, and continue execution. Pause only when the remaining ambiguity would introduce material product or technical risk.
-- Treat tasks as real production work rather than rehearsals or demos. Consider the complete system architecture before coding, and avoid building throwaway solutions.
-- Prefer Context7 for library, framework, and API questions. Call `resolve-library-id` and then `query-docs` unless the user provides a library ID, and stay within the per-task call limits.
-- Prefer running language-specific checks after editing source files, but only when the project exposes the relevant tooling. Skip them when the necessary scripts or configuration are missing:
-  - JavaScript: `npm test -- <filepath>` if the package defines `test`
-  - Python: `pytest <filepath>` when pytest is configured
-  - Go: `go fmt <filepath>` and `go test <package>` when modules/packages are set
-  - Java: `./gradlew test` for Gradle projects or `mvn test` for Maven projects that include test tasks
+- Default to Chinese unless the user explicitly requests another language.
+- The user is learning software architecture. For architecture, system design, module boundaries, abstractions, and tradeoffs, explain the decisive reasoning and useful learning points; keep unrelated work concise and task-focused.
+- Build a shared professional vocabulary instead of avoiding exact technical terms. When an established standard, pattern, method, or engineering concept improves precision, introduce it on first use as `中文名称（English term or acronym）`, define it in one short sentence, and immediately apply it to the current decision. Reuse the term directly afterward, introduce only terms that materially help the current task, and distinguish established terminology from locally invented labels.
+- When recommending a technical choice, lead with the default recommendation and its standard name, then state the decisive reason, key tradeoff, and applicability boundary. For example, name `Semantic Versioning (SemVer)` or `Calendar Versioning (CalVer)` when discussing version strategies instead of describing an unnamed numbering scheme.
+
+## Decision and execution
+
+- Infer both the literal request and the most likely intended outcome from the current message, recent trajectory, and observable system facts. Determine whether the message continues, corrects, escalates, or replaces prior work before acting.
+- Treat questions, doubts, and corrections as possible evidence that the current plan, execution, or validation is insufficient. Check for that gap first, revise the approach when needed, and continue with the next safe concrete step rather than stopping at an explanation.
+- Observable repository, code, UI, and runtime facts take precedence over inaccurate wording. If the intended outcome remains clear, correct the premise, act on the real target, and note the correction; never alter the system merely to make a false premise appear true.
+- The user owns goals, priorities, and acceptance criteria; the AI owns factual validation, ambiguity resolution, implementation choices, and rejecting changes that would degrade the system. Use the best-supported interpretation and default action unless the task is discussion-only, materially risky, irreversible, permission-blocked, or still ambiguous enough that acting would likely target the wrong outcome.
+- Treat tasks as production work, not rehearsals. Consider the complete system and reuse documented solutions only when they still fit the current constraints and correctness requirements.
+- In review mode, establish whether the scope is a directory, working tree, staged changes, branch, commit range, or pull request before evaluating it; do not treat branch names as filesystem paths.
+- Keep this file limited to durable current capabilities and active workflows. Put historical context, migration notes, and proposals in changelogs or ADRs instead.
+
+## Engineering workflow
+
+- Use repo-native validation: discover commands from the nearest `AGENTS.md`, package scripts, Makefile, task runner, and CI configuration instead of imposing a global language-level command. Run the narrowest relevant formatter, static check, and test first, then broaden validation in proportion to the change's risk.
+- Behavior changes should include necessary regression tests by default. Cover the success path and the important error, cancellation, state-transition, or module-boundary paths when those behaviors are material; if the repository lacks suitable tooling, state the gap explicitly instead of pretending the change is verified.
+- For Go projects, do not compile binaries directly into the repository tree as tracked project files. Create and use a project-local `.tmp/` directory for Go build outputs, and ensure `.tmp/` is listed in `.gitignore` so generated binaries are not committed.
 - Prefer `pnpm` when installing dependencies.
-- Ask for confirmation before adding new production dependencies.
-- Do not add rollback-style logic. Replace it with stricter constraints and checks that surface issues early; rollbacks are forbidden unless explicitly required.
-- Do not layer on "double insurance" solutions. Choose the best approach first; do not preserve an implementation solely because it already exists. If the project already has a mechanism intended to solve the problem, prefer fixing or simplifying that mechanism first. If the mechanism's design, ownership boundary, or abstraction is itself the cause of the problem, replace or refactor it instead of preserving it. Redundant layers are treated as "dumping" and must be avoided.
-- Keep deprecation details, legacy details, migration notes, and historical context in changelog or ADR documents.
-- This repo ships customer self-hosted builds for offline and private environments. Do not assume an internet SaaS model by default; when discussing security or protocols, start with the on-prem trust boundary and optional hardening knobs, then offer opt-in enhancements.
+- Treat build, package, publish, deploy, and runtime verification as separate lifecycle stages. Inspect repository documentation and a script's actual side effects before running it; a filename such as `build.sh` does not by itself authorize publishing, image pushes, remote deployment, or service restarts. Run local build/package validation by default when relevant, and run state-changing publish or deploy stages only when the user's request or an active repository workflow places them in scope.
+- Prefer strict preconditions, explicit state transitions, and roll-forward fixes over hidden rollback-style application logic that masks partial failure. Do not forbid recovery mechanisms categorically: operational rollback, forward-only migration, and compensating transactions are valid when the release or domain model requires them, but their trigger, consistency semantics, observability, and tests must be explicit.
+- Avoid accidental duplication: do not retain multiple mechanisms with the same responsibility and failure mode merely as "double insurance." Preserve defense in depth across trust boundaries and intentional redundancy for distinct failure modes; if an existing mechanism has the wrong ownership boundary or abstraction, replace or refactor it instead of stacking another overlapping layer on top.
+
+## Working Modes
+
+- Normal mode is the default. In normal mode, the agent may directly analyze, decide, implement, validate, and communicate results.
+- For complex tasks, use leader-style thinking: decompose the work, define interfaces and acceptance criteria, decide whether parallelism would materially help, and integrate the results within the current runtime's real capabilities.
+- Leader mode is entered only when the user explicitly asks for orchestration instead of direct execution; do not assume that a similarly named skill or runtime mode exists.
+- In leader mode, the main agent is responsible for task decomposition, executor selection, dispatch, review, integration, and final accountability.
+- In leader mode, the main agent may perform lightweight reconnaissance work, including reading repository context, checking environment constraints, clarifying boundaries, and drafting execution plans.
+- In leader mode, the main agent should not become the primary implementer of the main work item unless the user explicitly exits leader mode, the environment does not provide a viable executor path, or another higher-priority rule requires direct action.
+- Before assigning work, verify that the chosen executor is actually available in the current session. Never claim delegation, a named executor, or a skill exists solely because an instruction mentions it.
 
 ## Commit & Pull Request Conventions
 
@@ -44,7 +51,7 @@ All commits **must** follow the conventional form:
 
 Requirements:
 
-- The entire message **should be written in Chinese by default unless explicitly requested otherwise**.
+- Human-readable commit prose should be written in Chinese by default unless explicitly requested otherwise. Keep conventional machine-readable tokens such as the Conventional Commits `type` and `scope` in their ecosystem-standard form.
 - `<subject>` should be concise and fit on a single line.
 - `<body>` may describe motivation, design decisions, or side effects.
 - `<footer>` may include references, breaking changes, or related tasks.
