@@ -1,0 +1,4 @@
+interface:
+  display_name: "Gitignore Change Review"
+  short_description: "Review .gitignore rules before committing"
+  default_prompt: "Use $gitignore-change-review to review .gitignore changes before staging them."
