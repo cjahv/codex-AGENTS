@@ -1,6 +1,9 @@
 /*
 !/.gitignore
 !/AGENTS.md
+!/.codex/
+/.codex/*
+!/.codex/config.toml
 !/skills
 !/skills/**
 /skills/.system

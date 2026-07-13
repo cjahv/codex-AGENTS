@@ -1,0 +1,3 @@
+# This repository is also CODEX_HOME, so its root AGENTS.md is already loaded
+# as global guidance. Disable the duplicate project-document layer here only.
+project_doc_max_bytes = 0
